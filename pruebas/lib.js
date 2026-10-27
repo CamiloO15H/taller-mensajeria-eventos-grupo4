@@ -71,7 +71,7 @@ function contenedores(arq) {
   if (!Array.isArray(lista)) lista = [lista];
   return lista.map((c) => ({
     nombre: c.Name, servicio: c.Service, estado: c.State,
-    puertos: (c.Publishers || []).filter((p) => p.PublishedPort).map((p) => `${p.PublishedPort}->${p.TargetPort}`),
+    puertos: [...new Set((c.Publishers || []).filter((p) => p.PublishedPort).map((p) => `${p.PublishedPort}->${p.TargetPort}`))],
   }));
 }
 const filtrar = (texto, patron) => texto.split('\n').filter((l) => l.includes(patron)).join('\n');

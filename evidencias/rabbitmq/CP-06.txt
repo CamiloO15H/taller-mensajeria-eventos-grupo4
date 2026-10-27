@@ -1,0 +1,24 @@
+==============================================================================
+CP-06 · Trazabilidad del flujo (API → RabbitMQ → worker)
+Arquitectura: RabbitMQ (mensajes)
+Fecha de ejecución: 2026-10-27T12:04:10.003Z
+==============================================================================
+
+▶ Worker detenido un momento para observar el mensaje dentro del broker
+   $ docker compose stop notification-worker
+   Pedido: orderId=ORD-1004-MVQN0Z9N correlationId=cf1f6bef-a32a-40a5-bc0e-9002c7ce8a7c
+   📸 CAPTURA: Consola RabbitMQ → Queues → pedidos → Get messages: mensaje con orderId ORD-1004-MVQN0Z9N
+   $ docker compose start notification-worker
+   --- 1) orders-api ---
+   | orders-api  | 2026-10-27T12:04:19.981Z [orders-api] PUBLICADO orderId=ORD-1004-MVQN0Z9N correlationId=cf1f6bef-a32a-40a5-bc0e-9002c7ce8a7c cola=pedidos
+   --- 2) RabbitMQ (cola pedidos) ---
+   | message_id=ORD-1004-MVQN0Z9N correlation_id=cf1f6bef-a32a-40a5-bc0e-9002c7ce8a7c
+   --- 3) notification-worker ---
+   | notification-worker-1  | 2026-10-27T12:04:30.937Z [notification-worker 1de30bf7c052] RECIBIDO orderId=ORD-1004-MVQN0Z9N correlationId=cf1f6bef-a32a-40a5-bc0e-9002c7ce8a7c (REENTREGADO)
+   | notification-worker-1  | 2026-10-27T12:04:38.941Z [notification-worker 1de30bf7c052] PROCESADO orderId=ORD-1004-MVQN0Z9N correlationId=cf1f6bef-a32a-40a5-bc0e-9002c7ce8a7c (ack enviado)
+   ✔ La API registra el orderId y el correlationId
+   ✔ El broker tiene el mensaje con el mismo correlationId
+   ✔ El worker registra RECIBIDO y PROCESADO con el mismo correlationId
+   📸 CAPTURA: Terminal: docker compose logs orders-api notification-worker | findstr ORD-1004-MVQN0Z9N   (en Linux: grep)
+
+RESULTADO CP-06 (rabbitmq): CUMPLE  [3/3 verificaciones, 30.3 s]

@@ -1,0 +1,40 @@
+==============================================================================
+CP-12 · Recuperación: reinicio del broker sin pérdida de mensajes
+Arquitectura: RabbitMQ (mensajes)
+Fecha de ejecución: 2026-10-27T12:07:29.798Z
+==============================================================================
+
+▶ Detener el worker, vaciar la cola y publicar 3 pedidos
+   $ docker compose stop notification-worker
+   Antes del reinicio: Ready=3 Unacked=0 Total=3 Consumidores=0
+   📸 CAPTURA: Consola RabbitMQ: Ready = 3 ANTES del reinicio
+
+▶ Reiniciar RabbitMQ
+   $ docker compose restart rabbitmq
+   Después del reinicio: Ready=3 Unacked=0 Total=3 Consumidores=0
+   ✔ Los 3 mensajes siguen en la cola tras el reinicio (cola durable + mensajes persistentes)
+   📸 CAPTURA: Consola RabbitMQ (volver a iniciar sesión): Ready = 3 DESPUÉS del reinicio
+
+▶ La API se reconecta sola al broker
+   Nuevo pedido después del reinicio: HTTP 202 → ORD-1025-MVQN5OLF
+   ✔ La API acepta pedidos después del reinicio
+
+▶ Iniciar el worker y procesar lo pendiente
+   $ docker compose start notification-worker
+   --- Log del worker ---
+   | notification-worker-1  | 2026-10-27T12:05:48.961Z [notification-worker 1de30bf7c052] PROCESADO orderId=ORD-1010-MVQN2IAT correlationId=8fe60de9-73bf-47c9-9984-b47dbac1544b (ack enviado)
+   | notification-worker-1  | 2026-10-27T12:05:56.970Z [notification-worker 1de30bf7c052] PROCESADO orderId=ORD-1011-MVQN2P1O correlationId=6df4434e-4588-4eda-8a75-9bdb83e478cc (ack enviado)
+   | notification-worker-1  | 2026-10-27T12:06:04.980Z [notification-worker 1de30bf7c052] PROCESADO orderId=ORD-1012-MVQN2P1S correlationId=20a3aa3a-a150-43c5-80d2-e2000f5ff943 (ack enviado)
+   | notification-worker-1  | 2026-10-27T12:06:22.606Z [notification-worker 1de30bf7c052] PROCESADO orderId=ORD-1013-MVQN3FPG correlationId=2fc16fa8-c86f-4a53-8274-9f306616b6d0 (ack enviado)
+   | notification-worker-1  | 2026-10-27T12:06:30.616Z [notification-worker 1de30bf7c052] PROCESADO orderId=ORD-1015-MVQN3FPP correlationId=44d20c55-96db-427f-927e-5e2f56f44a02 (ack enviado)
+   | notification-worker-1  | 2026-10-27T12:06:38.619Z [notification-worker 1de30bf7c052] PROCESADO orderId=ORD-1017-MVQN3FPU correlationId=6de93147-30b6-4580-85b3-9798eb9538e2 (ack enviado)
+   | notification-worker-1  | 2026-10-27T12:07:06.754Z [notification-worker 1de30bf7c052] PROCESADO orderId=ORD-1019-MVQN430Q correlationId=b918655a-2248-49a5-8edf-529fd29fe932 (ack enviado)
+   | notification-worker-1  | 2026-10-27T12:07:14.763Z [notification-worker 1de30bf7c052] PROCESADO orderId=ORD-1020-MVQN430T correlationId=0cb0211a-f6c3-4877-a7d6-88dd9c097d27 (ack enviado)
+   | notification-worker-1  | 2026-10-27T12:07:22.772Z [notification-worker 1de30bf7c052] PROCESADO orderId=ORD-1021-MVQN430V correlationId=103b7046-7a4f-43bf-92ef-f5e5bbc4afa7 (ack enviado)
+   | notification-worker-1  | 2026-10-27T12:08:08.335Z [notification-worker 1de30bf7c052] PROCESADO orderId=ORD-1022-MVQN59FF correlationId=a5109f8d-286a-4e9c-bdb5-f464e3d763b0 (ack enviado)
+   | notification-worker-1  | 2026-10-27T12:08:16.339Z [notification-worker 1de30bf7c052] PROCESADO orderId=ORD-1023-MVQN59FI correlationId=6b10d630-09e8-4955-9e92-49bc28e56fca (ack enviado)
+   | notification-worker-1  | 2026-10-27T12:08:24.347Z [notification-worker 1de30bf7c052] PROCESADO orderId=ORD-1024-MVQN59FK correlationId=fc2f2f25-8021-49c9-a59b-4a4f92b763bc (ack enviado)
+   | notification-worker-1  | 2026-10-27T12:08:32.350Z [notification-worker 1de30bf7c052] PROCESADO orderId=ORD-1025-MVQN5OLF correlationId=cdc42dd7-8346-4779-848a-197cf20acd29 (ack enviado)
+   ✔ Se procesaron los 4 pedidos sin pérdida
+
+RESULTADO CP-12 (rabbitmq): CUMPLE  [3/3 verificaciones, 63.0 s]

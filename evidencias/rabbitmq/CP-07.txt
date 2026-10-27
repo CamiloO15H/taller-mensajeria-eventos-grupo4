@@ -1,0 +1,20 @@
+==============================================================================
+CP-07 · Responsive: la API responde sin esperar al consumidor
+Arquitectura: RabbitMQ (mensajes)
+Fecha de ejecución: 2026-10-27T12:04:40.307Z
+==============================================================================
+
+▶ Enviar 5 pedidos seguidos (el worker tarda 8 s por mensaje)
+   Pedido 1: HTTP 202 en 5 ms
+   Pedido 2: HTTP 202 en 3 ms
+   Pedido 3: HTTP 202 en 3 ms
+   Pedido 4: HTTP 202 en 2 ms
+   Pedido 5: HTTP 202 en 3 ms
+   Cola justo después: Ready=0 Unacked=1 Total=1 Consumidores=1
+   ✔ Todas las respuestas llegan en menos de 1 s → máximo 5 ms
+   ✔ La API respondió antes de que el worker terminara (hay mensajes pendientes) → el procesamiento sigue en segundo plano
+   📸 CAPTURA: Esta salida (tiempos de respuesta) y la consola RabbitMQ con mensajes pendientes en la cola
+
+▶ Esperar a que el worker vacíe la cola
+
+RESULTADO CP-07 (rabbitmq): CUMPLE  [2/2 verificaciones, 48.9 s]

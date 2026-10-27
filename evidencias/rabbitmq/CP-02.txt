@@ -1,0 +1,28 @@
+==============================================================================
+CP-02 · Envío de mensaje a RabbitMQ
+Arquitectura: RabbitMQ (mensajes)
+Fecha de ejecución: 2026-10-27T12:03:26.567Z
+==============================================================================
+
+▶ Precondición: worker detenido, para que el mensaje quede visible en la cola
+   $ docker compose stop notification-worker
+   Cola antes: Ready=1 Unacked=0 Total=1 Consumidores=0
+
+▶ POST /orders
+   HTTP 202 → orderId=ORD-1002-MVQMZWDD
+   Cola después: Ready=2 Unacked=0 Total=2 Consumidores=0
+   ✔ La cola "pedidos" existe y es durable → durable=true
+   ✔ El contador Ready aumentó en 1
+
+▶ Contenido del mensaje en la cola (vista sin consumir)
+   --- Mensaje en RabbitMQ ---
+   | properties: {"message_id":"ORD-1002-MVQMZWDD","correlation_id":"b0d2e5b5-9dbd-4851-8870-37d8183e2a97","delivery_mode":2,"type":"ProcessOrder"}
+   | payload: {"type":"ProcessOrder","orderId":"ORD-1002-MVQMZWDD","correlationId":"b0d2e5b5-9dbd-4851-8870-37d8183e2a97","customerName":"Cliente QA 1","product":"Libro de arquitectura","quantity":1,"createdAt":"2026-10-27T12:03:29.569Z"}
+   ✔ El mensaje con el orderId está en la cola
+   ✔ El mensaje es persistente (delivery_mode = 2)
+   📸 CAPTURA: Consola RabbitMQ → Queues → pedidos: Ready = 1 y "Get messages" mostrando el JSON del pedido
+
+▶ Restaurar: iniciar el worker
+   $ docker compose start notification-worker
+
+RESULTADO CP-02 (rabbitmq): CUMPLE  [4/4 verificaciones, 17.9 s]

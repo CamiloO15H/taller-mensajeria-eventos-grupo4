@@ -1,0 +1,30 @@
+==============================================================================
+CP-10 · Elastic: distribución de carga con múltiples consumidores
+Arquitectura: RabbitMQ (mensajes)
+Fecha de ejecución: 2026-10-27T12:06:05.945Z
+==============================================================================
+
+▶ Escalar a 2 workers
+   $ docker compose up -d --scale notification-worker=2
+   Cola: Ready=0 Unacked=0 Total=0 Consumidores=2
+   ✔ RabbitMQ registra 2 consumidores en la cola
+   📸 CAPTURA: Consola RabbitMQ → Queues → pedidos → Consumers: 2 consumidores
+
+▶ Enviar 6 pedidos
+   --- Mensajes procesados por instancia ---
+   | c2a1ff2d27cb: 3
+   | 1de30bf7c052: 3
+   --- Log combinado ---
+   | notification-worker-2  | 2026-10-27T12:06:22.606Z [notification-worker c2a1ff2d27cb] PROCESADO orderId=ORD-1014-MVQN3FPK correlationId=ecde4a85-fe1f-4ae2-8478-cdc1adeab730 (ack enviado)
+   | notification-worker-2  | 2026-10-27T12:06:30.616Z [notification-worker c2a1ff2d27cb] PROCESADO orderId=ORD-1016-MVQN3FPR correlationId=3e5879ec-274b-4d9c-86dd-a8aacc8e3227 (ack enviado)
+   | notification-worker-2  | 2026-10-27T12:06:38.619Z [notification-worker c2a1ff2d27cb] PROCESADO orderId=ORD-1018-MVQN3FPX correlationId=252d1a57-7417-4596-99a3-cf1af04b690e (ack enviado)
+   | notification-worker-1  | 2026-10-27T12:06:22.606Z [notification-worker 1de30bf7c052] PROCESADO orderId=ORD-1013-MVQN3FPG correlationId=2fc16fa8-c86f-4a53-8274-9f306616b6d0 (ack enviado)
+   | notification-worker-1  | 2026-10-27T12:06:30.616Z [notification-worker 1de30bf7c052] PROCESADO orderId=ORD-1015-MVQN3FPP correlationId=44d20c55-96db-427f-927e-5e2f56f44a02 (ack enviado)
+   | notification-worker-1  | 2026-10-27T12:06:38.619Z [notification-worker 1de30bf7c052] PROCESADO orderId=ORD-1017-MVQN3FPU correlationId=6de93147-30b6-4580-85b3-9798eb9538e2 (ack enviado)
+   ✔ Los 6 pedidos se procesaron
+   ✔ La carga se repartió entre las 2 instancias
+   📸 CAPTURA: Terminal: docker compose logs notification-worker (dos instancias distintas procesando)
+
+▶ Restaurar a 1 worker
+
+RESULTADO CP-10 (rabbitmq): CUMPLE  [3/3 verificaciones, 34.9 s]

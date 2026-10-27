@@ -80,8 +80,9 @@ const casos = {
     const m = msgs.find((x) => x.payload.includes(r.json.orderId));
     if (m) ev.bloque('Mensaje en RabbitMQ', `properties: ${JSON.stringify({ message_id: m.properties.message_id, correlation_id: m.properties.correlation_id, delivery_mode: m.properties.delivery_mode, type: m.properties.type })}\npayload: ${m.payload}`);
     ev.check('El mensaje con el orderId está en la cola', !!m);
+    ev.dato('Nota: "Get messages" lee el mensaje y lo devuelve a la cola; por eso RabbitMQ lo marca como redelivered y el worker lo registrará como REENTREGADO.');
     ev.check('El mensaje es persistente (delivery_mode = 2)', !!m && m.properties.delivery_mode === 2);
-    await captura(ev, 'Consola RabbitMQ → Queues → pedidos: Ready = 1 y "Get messages" mostrando el JSON del pedido');
+    await captura(ev, 'Consola RabbitMQ → Queues → pedidos: Ready aumentó en 1 y "Get messages" mostrando el JSON del pedido');
     ev.paso('Restaurar: iniciar el worker');
     await iniciarWorker(ev);
     return ev.cerrar();
@@ -124,6 +125,7 @@ const casos = {
     ev.bloque('1) orders-api', lApi);
     ev.bloque('2) RabbitMQ (cola pedidos)', enBroker ? `message_id=${enBroker.properties.message_id} correlation_id=${enBroker.properties.correlation_id}` : '');
     ev.bloque('3) notification-worker', lWorker);
+    ev.dato('Nota: aparece como REENTREGADO porque el mensaje se inspeccionó en el broker (Get messages con reencolado) antes de que el worker lo consumiera.');
     ev.check('La API registra el orderId y el correlationId', lApi.includes(correlationId));
     ev.check('El broker tiene el mensaje con el mismo correlationId', !!enBroker && enBroker.properties.correlation_id === correlationId);
     ev.check('El worker registra RECIBIDO y PROCESADO con el mismo correlationId', lWorker.includes('RECIBIDO') && lWorker.includes('PROCESADO') && lWorker.includes(correlationId));
@@ -137,7 +139,7 @@ const casos = {
     ev.paso('Enviar 5 pedidos seguidos (el worker tarda 8 s por mensaje)');
     const tiempos = [];
     for (let i = 1; i <= 5; i++) { const r = await crearPedido(pedido(i)); tiempos.push(r.ms); ev.dato(`Pedido ${i}: HTTP ${r.status} en ${r.ms} ms`); }
-    const q = await esperarCola((x) => x.messages >= 1, 10000);
+    const q = await esperarCola((x) => x.messages >= 3, 12000) || await esperarCola((x) => x.messages >= 1, 3000);
     ev.dato(`Cola justo después: ${q ? resumenCola(q) : resumenCola(await cola())}`);
     const max = Math.max(...tiempos);
     ev.check('Todas las respuestas llegan en menos de 1 s', max < 1000, `máximo ${max} ms`);
@@ -244,7 +246,7 @@ const casos = {
     await sleep(3000);
     await iniciarWorker(ev);
     const ok = await esperar(() => ids.every((id) => logs(ARQ, WORKER, desde).includes(`PROCESADO orderId=${id}`)), { timeout: 60000 });
-    ev.bloque('Log del worker', filtrar(logs(ARQ, WORKER, desde), 'PROCESADO'));
+    ev.bloque('Log del worker', filtrar(logs(ARQ, WORKER, desde), 'PROCESADO').split('\n').filter((l) => ids.some((id) => l.includes(id))).join('\n'));
     ev.check('El worker procesa los 3 mensajes pendientes al iniciar', !!ok);
     const vacia = await esperarCola((x) => x.messages === 0);
     ev.check('La cola queda en 0', !!vacia);
@@ -279,7 +281,7 @@ const casos = {
     ev.paso('Iniciar el worker y procesar lo pendiente');
     await iniciarWorker(ev);
     const ok = await esperar(() => ids.every((id) => logs(ARQ, WORKER, desde).includes(`PROCESADO orderId=${id}`)), { timeout: 60000 });
-    ev.bloque('Log del worker', filtrar(logs(ARQ, WORKER, desde), 'PROCESADO'));
+    ev.bloque('Log del worker', filtrar(logs(ARQ, WORKER, desde), 'PROCESADO').split('\n').filter((l) => ids.some((id) => l.includes(id))).join('\n'));
     ev.check(`Se procesaron los ${ids.length} pedidos sin pérdida`, !!ok);
     return ev.cerrar();
   },
