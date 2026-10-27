@@ -1,0 +1,27 @@
+==============================================================================
+CP-06 · Trazabilidad del flujo (API → Kafka → consumidores)
+Arquitectura: Apache Kafka (eventos)
+Fecha de ejecución: 2026-10-27T13:24:00.207Z
+==============================================================================
+   Pedido: orderId=ORD-1044-MVQPVG9J correlationId=e86a8385-fa91-4f03-9547-d9bee83a79db
+   --- 1) orders-api ---
+   | orders-api  | 2026-10-27T13:24:00.921Z [orders-api] PUBLICADO eventType=OrderCreated orderId=ORD-1044-MVQPVG9J correlationId=e86a8385-fa91-4f03-9547-d9bee83a79db topic=orders.events partition=2 offset=19
+   --- 2) Kafka (tópico orders.events) ---
+   | partition=2 offset=19 eventId=bc355c9d-1627-4f2b-ba65-23f894199c75 correlationId=e86a8385-fa91-4f03-9547-d9bee83a79db
+   ✔ La API registra orderId y correlationId
+   ✔ El evento en Kafka tiene el mismo correlationId
+   --- 3) inventory-consumer ---
+   | inventory-consumer-1  | 2026-10-27T13:24:00.923Z [inventory-consumer 65abd068d4fb] RECIBIDO eventType=OrderCreated orderId=ORD-1044-MVQPVG9J correlationId=e86a8385-fa91-4f03-9547-d9bee83a79db topic=orders.events partition=2 offset=19
+   | inventory-consumer-1  | 2026-10-27T13:24:01.923Z [inventory-consumer 65abd068d4fb] PROCESADO orderId=ORD-1044-MVQPVG9J correlationId=e86a8385-fa91-4f03-9547-d9bee83a79db partition=2 offset=19
+   ✔ inventory-consumer registra el mismo correlationId
+   --- 4) billing-consumer ---
+   | billing-consumer-1  | 2026-10-27T13:24:00.922Z [billing-consumer 70b78db61d22] RECIBIDO eventType=OrderCreated orderId=ORD-1044-MVQPVG9J correlationId=e86a8385-fa91-4f03-9547-d9bee83a79db topic=orders.events partition=2 offset=19
+   | billing-consumer-1  | 2026-10-27T13:24:01.923Z [billing-consumer 70b78db61d22] PROCESADO orderId=ORD-1044-MVQPVG9J correlationId=e86a8385-fa91-4f03-9547-d9bee83a79db partition=2 offset=19
+   ✔ billing-consumer registra el mismo correlationId
+   --- 5) notification-consumer ---
+   | notification-consumer-1  | 2026-10-27T13:24:00.923Z [notification-consumer b5820903fd26] RECIBIDO eventType=OrderCreated orderId=ORD-1044-MVQPVG9J correlationId=e86a8385-fa91-4f03-9547-d9bee83a79db topic=orders.events partition=2 offset=19
+   | notification-consumer-1  | 2026-10-27T13:24:01.924Z [notification-consumer b5820903fd26] PROCESADO orderId=ORD-1044-MVQPVG9J correlationId=e86a8385-fa91-4f03-9547-d9bee83a79db partition=2 offset=19
+   ✔ notification-consumer registra el mismo correlationId
+   📸 CAPTURA: Logs de orders-api y de los 3 consumidores filtrados por ORD-1044-MVQPVG9J, y el mensaje en Kafka UI
+
+RESULTADO CP-06 (kafka): CUMPLE  [5/5 verificaciones, 948.8 s]

@@ -1,0 +1,37 @@
+==============================================================================
+CP-08 · Message-driven: sin comunicación directa entre servicios
+Arquitectura: Apache Kafka (eventos)
+Fecha de ejecución: 2026-10-27T13:40:57.181Z
+==============================================================================
+
+▶ Puertos publicados por cada contenedor
+   --- docker compose ps ---
+   | arq-kafka-billing-consumer-1             running   (sin puertos publicados)
+   | arq-kafka-inventory-consumer-1           running   (sin puertos publicados)
+   | arq-kafka-notification-consumer-1        running   (sin puertos publicados)
+   | kafka                                    running   29092->29092
+   | kafka-ui                                 running   8080->8080
+   | orders-api                               running   3000->3000
+   ✔ Ningún consumidor publica puertos
+
+▶ Variables de entorno de orders-api
+   --- orders-api printenv ---
+   | KAFKA_BROKER=kafka:9092
+   | KAFKA_TOPIC=orders.events
+   | TOPIC_PARTITIONS=3
+   ✔ orders-api solo conoce al broker y al tópico
+
+▶ Intento de llamada HTTP directa desde orders-api hacia un consumidor
+   NO_ALCANZABLE ECONNREFUSED
+   ✔ El consumidor no es alcanzable por HTTP
+
+▶ Consumer groups registrados en Kafka (cada consumidor tiene el suyo)
+   --- Grupos ---
+   | billing-service-group
+   | inventory-service-group
+   | audit-service-group-1793106781558
+   | notification-service-group
+   ✔ Existen los 3 grupos funcionales distintos
+   📸 CAPTURA: docker compose ps (consumidores sin puertos) y Kafka UI → Consumers: 3 grupos
+
+RESULTADO CP-08 (kafka): CUMPLE  [4/4 verificaciones, 267.8 s]

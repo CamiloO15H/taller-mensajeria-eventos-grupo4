@@ -69,6 +69,9 @@ async function preparar(ev) {
 }
 
 // ================= CASOS =================
+// Solo las líneas PROCESADO de los pedidos de este caso
+const soloIds = (texto, ids) => texto.split('\n').filter((l) => l.includes('PROCESADO') && ids.some((id) => l.includes(id))).join('\n');
+
 const casos = {
   async 'CP-01'() {
     const ev = new Evidencia(ARQ, 'CP-01', 'Creación de pedido vía API');
@@ -224,7 +227,7 @@ const casos = {
     ev.paso('Recuperación: iniciar billing-consumer');
     compose(ARQ, 'start billing-consumer');
     await esperarProcesado(desde, ['billing-consumer'], ids);
-    ev.bloque('billing-consumer', filtrar(logs(ARQ, 'billing-consumer', desde), 'PROCESADO'));
+    ev.bloque('billing-consumer', soloIds(logs(ARQ, 'billing-consumer', desde), ids));
     ev.check('billing procesó los 3 eventos pendientes al volver', ids.every((id) => procesadoPor(desde, 'billing-consumer', id)));
     return ev.cerrar();
   },
@@ -279,7 +282,7 @@ const casos = {
     await sleep(3000);
     compose(ARQ, 'start notification-consumer');
     await esperarProcesado(desde, ['notification-consumer'], ids);
-    ev.bloque('notification-consumer', filtrar(logs(ARQ, 'notification-consumer', desde), 'PROCESADO'));
+    ev.bloque('notification-consumer', soloIds(logs(ARQ, 'notification-consumer', desde), ids));
     ev.check('Procesa los 3 eventos desde su último offset confirmado', ids.every((id) => procesadoPor(desde, 'notification-consumer', id)));
     ev.paso('B) Consumidor POSTERIOR: un grupo nuevo que arranca después de publicar');
     const grupoNuevo = `audit-service-group-${Date.now()}`;
@@ -330,7 +333,7 @@ const casos = {
     ev.paso('Iniciar inventory-consumer');
     compose(ARQ, 'start inventory-consumer');
     await esperarProcesado(desde, CONSUMIDORES, ids, 150000);
-    ev.bloque('inventory-consumer', filtrar(logs(ARQ, 'inventory-consumer', desde), 'PROCESADO'));
+    ev.bloque('inventory-consumer', soloIds(logs(ARQ, 'inventory-consumer', desde), ids));
     ev.check(`Los ${ids.length} pedidos llegaron a los 3 consumidores sin pérdida`, CONSUMIDORES.every((c) => ids.every((id) => procesadoPor(desde, c, id))));
     await sleep(6000);
     const l2 = await lag(GRUPOS['inventory-consumer']);

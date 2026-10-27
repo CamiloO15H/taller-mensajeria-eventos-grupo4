@@ -1,0 +1,27 @@
+==============================================================================
+CP-09 · Resilient: el sistema soporta la caída de un consumidor
+Arquitectura: Apache Kafka (eventos)
+Fecha de ejecución: 2026-10-27T13:45:24.952Z
+==============================================================================
+
+▶ Detener billing-consumer
+   $ docker compose stop billing-consumer
+
+▶ Publicar 3 pedidos con billing caído
+   HTTP 202 (6 ms) → ORD-1050-MVQQN2YD
+   HTTP 202 (6 ms) → ORD-1051-MVQQN2YK
+   HTTP 202 (5 ms) → ORD-1052-MVQQN2YR
+   ✔ La API sigue respondiendo 202
+   ✔ Inventario y notificaciones procesaron los 3 eventos sin depender de billing
+   billing-service-group con el consumidor caído → p2: committed=20 high=21 lag=1 | p1: committed=10 high=10 lag=0 | p0: committed=19 high=21 lag=2
+   ✔ Los eventos esperan a billing en el log (lag ≥ 3) → lag=3
+   📸 CAPTURA: Kafka UI → Consumers → billing-service-group: lag ≥ 3 con el consumidor caído
+
+▶ Recuperación: iniciar billing-consumer
+   --- billing-consumer ---
+   | billing-consumer-1  | 2026-10-27T13:48:52.105Z [billing-consumer 70b78db61d22] PROCESADO orderId=ORD-1051-MVQQN2YK correlationId=7e48cc96-fe9c-4c73-9611-2f949eb72c22 partition=2 offset=20
+   | billing-consumer-1  | 2026-10-27T13:48:53.112Z [billing-consumer 70b78db61d22] PROCESADO orderId=ORD-1050-MVQQN2YD correlationId=ca6a7f85-356b-4a19-aada-23738b11b33a partition=0 offset=19
+   | billing-consumer-1  | 2026-10-27T13:48:54.113Z [billing-consumer 70b78db61d22] PROCESADO orderId=ORD-1052-MVQQN2YR correlationId=42b95395-6f48-4e23-8db9-3ebccdfe994a partition=0 offset=20
+   ✔ billing procesó los 3 eventos pendientes al volver
+
+RESULTADO CP-09 (kafka): CUMPLE  [4/4 verificaciones, 210.2 s]

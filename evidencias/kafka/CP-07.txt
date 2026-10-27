@@ -1,0 +1,19 @@
+==============================================================================
+CP-07 · Responsive: la API responde sin esperar a los consumidores
+Arquitectura: Apache Kafka (eventos)
+Fecha de ejecución: 2026-10-27T13:39:49.027Z
+==============================================================================
+
+▶ Enviar 5 pedidos seguidos (cada consumidor tarda 1 s por evento)
+   Pedido 1: HTTP 202 en 7 ms
+   Pedido 2: HTTP 202 en 4 ms
+   Pedido 3: HTTP 202 en 4 ms
+   Pedido 4: HTTP 202 en 3 ms
+   Pedido 5: HTTP 202 en 3 ms
+   Eventos aún pendientes en inventory-service-group justo después: 5
+   ✔ Todas las respuestas llegan en menos de 1 s → máximo 7 ms
+   ✔ Las respuestas tardan menos que el procesamiento de un solo consumidor (1 s)
+   📸 CAPTURA: Esta salida (tiempos de respuesta) y Kafka UI → Consumers con lag mientras procesan
+   Los consumidores terminaron después, en segundo plano.
+
+RESULTADO CP-07 (kafka): CUMPLE  [2/2 verificaciones, 68.2 s]

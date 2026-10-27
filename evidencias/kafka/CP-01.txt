@@ -1,0 +1,18 @@
+==============================================================================
+CP-01 · Creación de pedido vía API
+Arquitectura: Apache Kafka (eventos)
+Fecha de ejecución: 2026-10-27T13:19:48.066Z
+==============================================================================
+
+▶ POST /orders con un pedido válido
+   Body: {"customerName":"Carlos","product":"Libro de arquitectura","quantity":1,"unitPrice":85000}
+   HTTP 202 en 10 ms → {"status":"accepted","message":"Pedido recibido y evento OrderCreated publicado en Kafka","orderId":"ORD-1040-MVQPQ1RP","correlationId":"8e4916c7-f912-4a82-96cf-0a8ab606030a"}
+   ✔ Responde 202 Accepted
+   ✔ status = "accepted" y trae orderId → ORD-1040-MVQPQ1RP
+
+▶ POST /orders con datos inválidos (sin unitPrice)
+   HTTP 400 → {"status":"rejected","message":"customerName y product son obligatorios; quantity entero > 0; unitPrice número > 0"}
+   ✔ Rechaza el JSON inválido con 400
+   📸 CAPTURA: Postman: POST http://localhost:3000/orders con el body válido → 202 accepted
+
+RESULTADO CP-01 (kafka): CUMPLE  [3/3 verificaciones, 56.3 s]

@@ -1,0 +1,26 @@
+==============================================================================
+CP-10 · Elastic: distribución de carga con múltiples consumidores
+Arquitectura: Apache Kafka (eventos)
+Fecha de ejecución: 2026-10-27T13:48:55.141Z
+==============================================================================
+
+▶ Escalar inventory-consumer a 2 instancias (mismo consumer group)
+   $ docker compose up -d --scale inventory-consumer=2
+   ✔ El grupo inventory-service-group tiene 2 miembros
+   --- Asignación de particiones por miembro ---
+   | inventory-consumer-65abd068d4fb: particiones 1
+   | inventory-consumer-46b0587a8b6f: particiones 2,0
+   ✔ Cada miembro tiene al menos una partición asignada
+   📸 CAPTURA: Kafka UI → Consumers → inventory-service-group: 2 miembros con particiones asignadas
+
+▶ Enviar 20 pedidos (claves distintas → particiones distintas)
+   --- Eventos procesados por instancia ---
+   | 46b0587a8b6f: 17 eventos, particiones 0,2
+   | 65abd068d4fb: 3 eventos, particiones 1
+   ✔ Los 20 eventos se procesaron
+   ✔ La carga se repartió entre las 2 instancias
+   📸 CAPTURA: Terminal: docker compose logs inventory-consumer (dos instancias y sus particiones)
+
+▶ Restaurar a 1 instancia
+
+RESULTADO CP-10 (kafka): CUMPLE  [4/4 verificaciones, 254.1 s]

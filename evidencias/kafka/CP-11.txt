@@ -1,0 +1,36 @@
+==============================================================================
+CP-11 · Desacoplamiento temporal y consumidor posterior
+Arquitectura: Apache Kafka (eventos)
+Fecha de ejecución: 2026-10-27T13:53:09.208Z
+==============================================================================
+
+▶ A) Detener notification-consumer y publicar 3 pedidos
+   HTTP 202 → ORD-1073-MVQQWZ4X
+   HTTP 202 → ORD-1074-MVQQWZ51
+   HTTP 202 → ORD-1075-MVQQWZ54
+   notification-service-group apagado → p2: committed=27 high=29 lag=2 | p1: committed=13 high=13 lag=0 | p0: committed=32 high=33 lag=1
+   ✔ Los eventos quedan pendientes para el grupo apagado (lag ≥ 3)
+   📸 CAPTURA: Kafka UI → Consumers → notification-service-group: lag ≥ 3 con el consumidor apagado
+
+▶ Iniciar notification-consumer más tarde
+   --- notification-consumer ---
+   | notification-consumer-1  | 2026-10-27T13:57:59.371Z [notification-consumer b5820903fd26] PROCESADO orderId=ORD-1073-MVQQWZ4X correlationId=fef613e8-04ee-4b84-8552-61a314b74371 partition=0 offset=32
+   | notification-consumer-1  | 2026-10-27T13:58:00.382Z [notification-consumer b5820903fd26] PROCESADO orderId=ORD-1074-MVQQWZ51 correlationId=8a2c63e4-55b6-4432-b94d-14910790ffbf partition=2 offset=27
+   | notification-consumer-1  | 2026-10-27T13:58:01.382Z [notification-consumer b5820903fd26] PROCESADO orderId=ORD-1075-MVQQWZ54 correlationId=9d35fe53-a8ad-464b-bfa7-5e2357c6ffa8 partition=2 offset=28
+   ✔ Procesa los 3 eventos desde su último offset confirmado
+
+▶ B) Consumidor POSTERIOR: un grupo nuevo que arranca después de publicar
+   $ AUDIT_GROUP_ID=audit-service-group-1793109482654 docker compose --profile tardio up -d audit-consumer
+   El auditor leyó 75 eventos del log (el tópico tiene 75).
+   --- audit-consumer (primeras y últimas líneas) ---
+   | audit-consumer-1  | 2026-10-27T13:58:07.385Z [audit-consumer 42a6b1ed298a] PROCESADO orderId=ORD-1008-MVQPFQOE correlationId=aaa63713-df13-4afe-877c-1baa1b1f6ad9 partition=0 offset=0
+   | audit-consumer-1  | 2026-10-27T13:58:07.389Z [audit-consumer 42a6b1ed298a] PROCESADO orderId=ORD-1009-MVQPFQOI correlationId=cc8dc607-262a-4a88-8022-2f19229af381 partition=0 offset=1
+   | audit-consumer-1  | 2026-10-27T13:58:07.391Z [audit-consumer 42a6b1ed298a] PROCESADO orderId=ORD-1011-MVQPFYHY correlationId=8272f4a3-7bbf-4ba1-8f8e-b9ef2f818280 partition=0 offset=2
+   | ...
+   | audit-consumer-1  | 2026-10-27T13:58:07.488Z [audit-consumer 42a6b1ed298a] PROCESADO orderId=ORD-1072-MVQQTRA9 correlationId=7a72176e-a1bb-4ca6-bb38-e582eeb79f55 partition=2 offset=26
+   | audit-consumer-1  | 2026-10-27T13:58:07.490Z [audit-consumer 42a6b1ed298a] PROCESADO orderId=ORD-1074-MVQQWZ51 correlationId=8a2c63e4-55b6-4432-b94d-14910790ffbf partition=2 offset=27
+   | audit-consumer-1  | 2026-10-27T13:58:07.491Z [audit-consumer 42a6b1ed298a] PROCESADO orderId=ORD-1075-MVQQWZ54 correlationId=9d35fe53-a8ad-464b-bfa7-5e2357c6ffa8 partition=2 offset=28
+   ✔ El consumidor posterior lee desde el inicio del log, incluidos los 3 pedidos
+   📸 CAPTURA: Terminal: docker compose logs audit-consumer (lee desde offset 0) y Kafka UI → Consumers: el grupo nuevo
+
+RESULTADO CP-11 (kafka): CUMPLE  [3/3 verificaciones, 448.5 s]

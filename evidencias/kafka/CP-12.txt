@@ -1,0 +1,31 @@
+==============================================================================
+CP-12 · Recuperación: reinicio del consumidor y del broker sin pérdida
+Arquitectura: Apache Kafka (eventos)
+Fecha de ejecución: 2026-10-27T14:00:37.699Z
+==============================================================================
+
+▶ Detener inventory-consumer y publicar 3 pedidos
+   Antes del reinicio: eventos en el tópico=78; inventory lag=3
+   📸 CAPTURA: Kafka UI → Topics → orders.events: número de mensajes ANTES del reinicio
+
+▶ Reiniciar el broker Kafka
+   $ docker compose restart kafka
+   Después del reinicio: eventos en el tópico=78
+   ✔ El log de eventos se conserva tras el reinicio (volumen persistente) → 78 ≥ 78
+   📸 CAPTURA: Kafka UI → Topics → orders.events: mismos mensajes DESPUÉS del reinicio
+
+▶ La API vuelve a publicar después del reinicio
+   Nuevo pedido: HTTP 202 → ORD-1079-MVQRFX7X
+   ✔ La API acepta pedidos después del reinicio
+
+▶ Iniciar inventory-consumer
+   --- inventory-consumer ---
+   | inventory-consumer-1  | 2026-10-27T14:08:00.748Z [inventory-consumer 65abd068d4fb] PROCESADO orderId=ORD-1079-MVQRFX7X correlationId=b12dc452-d12c-40ca-ae32-d2bab9535bdb partition=2 offset=29
+   | inventory-consumer-1  | 2026-10-27T14:08:01.760Z [inventory-consumer 65abd068d4fb] PROCESADO orderId=ORD-1076-MVQR6L3L correlationId=4538dd65-2355-4af5-b315-1282dd5807b4 partition=0 offset=33
+   | inventory-consumer-1  | 2026-10-27T14:08:02.761Z [inventory-consumer 65abd068d4fb] PROCESADO orderId=ORD-1077-MVQR6L3S correlationId=3cc502a4-fac0-426d-b997-67291332f4f4 partition=0 offset=34
+   | inventory-consumer-1  | 2026-10-27T14:08:03.765Z [inventory-consumer 65abd068d4fb] PROCESADO orderId=ORD-1078-MVQR6L3V correlationId=609e04dc-8e70-4ec4-a5f3-c8df19d8dc1f partition=1 offset=13
+   ✔ Los 4 pedidos llegaron a los 3 consumidores sin pérdida
+   inventory lag final → p2: committed=30 high=30 lag=0 | p1: committed=14 high=14 lag=0 | p0: committed=35 high=35 lag=0
+   ✔ inventory-service-group quedó al día (lag = 0)
+
+RESULTADO CP-12 (kafka): CUMPLE  [4/4 verificaciones, 457.4 s]

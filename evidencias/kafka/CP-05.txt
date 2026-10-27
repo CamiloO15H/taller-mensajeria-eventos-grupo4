@@ -1,0 +1,33 @@
+==============================================================================
+CP-05 · Consumo del evento (Kafka)
+Arquitectura: Apache Kafka (eventos)
+Fecha de ejecución: 2026-10-27T13:22:07.425Z
+==============================================================================
+
+▶ POST /orders
+   HTTP 202 → orderId=ORD-1043-MVQPT1B5
+
+▶ Esperar a que los 3 consumidores procesen el MISMO evento
+   --- inventory-consumer ---
+   | inventory-consumer-1  | 2026-10-27T13:22:08.230Z [inventory-consumer 65abd068d4fb] RECIBIDO eventType=OrderCreated orderId=ORD-1043-MVQPT1B5 correlationId=09d49b06-0561-4559-9cc0-b446140a61ef topic=orders.events partition=0 offset=14
+   | inventory-consumer-1  | 2026-10-27T13:22:09.232Z [inventory-consumer 65abd068d4fb] PROCESADO orderId=ORD-1043-MVQPT1B5 correlationId=09d49b06-0561-4559-9cc0-b446140a61ef partition=0 offset=14
+   ✔ inventory-consumer recibió y procesó el evento
+   --- billing-consumer ---
+   | billing-consumer-1  | 2026-10-27T13:22:08.232Z [billing-consumer 70b78db61d22] RECIBIDO eventType=OrderCreated orderId=ORD-1043-MVQPT1B5 correlationId=09d49b06-0561-4559-9cc0-b446140a61ef topic=orders.events partition=0 offset=14
+   | billing-consumer-1  | 2026-10-27T13:22:09.232Z [billing-consumer 70b78db61d22] PROCESADO orderId=ORD-1043-MVQPT1B5 correlationId=09d49b06-0561-4559-9cc0-b446140a61ef partition=0 offset=14
+   ✔ billing-consumer recibió y procesó el evento
+   --- notification-consumer ---
+   | notification-consumer-1  | 2026-10-27T13:22:08.233Z [notification-consumer b5820903fd26] RECIBIDO eventType=OrderCreated orderId=ORD-1043-MVQPT1B5 correlationId=09d49b06-0561-4559-9cc0-b446140a61ef topic=orders.events partition=0 offset=14
+   | notification-consumer-1  | 2026-10-27T13:22:09.232Z [notification-consumer b5820903fd26] PROCESADO orderId=ORD-1043-MVQPT1B5 correlationId=09d49b06-0561-4559-9cc0-b446140a61ef partition=0 offset=14
+   ✔ notification-consumer recibió y procesó el evento
+
+▶ Offsets confirmados por cada consumer group
+   inventory-service-group → p2: committed=19 high=19 lag=0 | p1: committed=9 high=9 lag=0 | p0: committed=15 high=15 lag=0
+   ✔ inventory-service-group sin eventos pendientes (lag = 0)
+   billing-service-group → p2: committed=19 high=19 lag=0 | p1: committed=9 high=9 lag=0 | p0: committed=15 high=15 lag=0
+   ✔ billing-service-group sin eventos pendientes (lag = 0)
+   notification-service-group → p2: committed=19 high=19 lag=0 | p1: committed=9 high=9 lag=0 | p0: committed=15 high=15 lag=0
+   ✔ notification-service-group sin eventos pendientes (lag = 0)
+   📸 CAPTURA: Logs de los 3 consumidores y Kafka UI → Consumers: los 3 grupos con lag 0
+
+RESULTADO CP-05 (kafka): CUMPLE  [6/6 verificaciones, 112.8 s]

@@ -1,0 +1,39 @@
+==============================================================================
+CP-04 · Publicación de evento OrderCreated en Kafka
+Arquitectura: Apache Kafka (eventos)
+Fecha de ejecución: 2026-10-27T13:20:44.370Z
+==============================================================================
+
+▶ Tópico y particiones
+   Tópico orders.events: 3 particiones
+   ✔ El tópico orders.events existe con al menos 2 particiones → 3 particiones
+
+▶ POST /orders
+   HTTP 202 → orderId=ORD-1042-MVQPR96F
+   Eventos en el tópico: antes=41 después=42
+   ✔ El tópico tiene un evento más
+
+▶ Leer el evento publicado desde Kafka
+   --- Evento (partition=0, offset=13, key=ORD-1042-MVQPR96F) ---
+   | {
+   |   "eventId": "0e7a5286-4905-4691-a65c-19dc633323eb",
+   |   "eventType": "OrderCreated",
+   |   "eventVersion": "1.0",
+   |   "occurredAt": "2026-10-27T13:20:45.111Z",
+   |   "source": "orders-api",
+   |   "correlationId": "516f136e-1567-40a1-a5a7-276e0aed6273",
+   |   "data": {
+   |     "orderId": "ORD-1042-MVQPR96F",
+   |     "customerName": "Cliente QA 1",
+   |     "product": "Libro de arquitectura",
+   |     "quantity": 1,
+   |     "unitPrice": 85000,
+   |     "total": 85000
+   |   }
+   | }
+   ✔ eventType = "OrderCreated" (un hecho en pasado, no un comando)
+   ✔ Tiene los metadatos mínimos: eventId, eventVersion, occurredAt, source, correlationId, data
+   ✔ data.orderId coincide con el pedido creado
+   📸 CAPTURA: Kafka UI → Topics → orders.events → Messages: evento OrderCreated de ORD-1042-MVQPR96F (y pestaña de particiones)
+
+RESULTADO CP-04 (kafka): CUMPLE  [5/5 verificaciones, 83.1 s]
