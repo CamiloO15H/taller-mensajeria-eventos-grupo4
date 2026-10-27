@@ -1,19 +1,19 @@
 ==============================================================================
 CP-03 · Consumo de mensaje (RabbitMQ)
 Arquitectura: RabbitMQ (mensajes)
-Fecha de ejecución: 2026-10-27T12:03:44.450Z
+Fecha de ejecución: 2026-10-27T12:24:54.524Z
 ==============================================================================
 
 ▶ POST /orders con el worker activo
-   HTTP 202 → orderId=ORD-1003-MVQN08EC
+   HTTP 202 → orderId=ORD-1029-MVQNRGE8
 
 ▶ Esperar a que el worker lo procese y confirme (ack)
    --- Log del notification-worker ---
-   | notification-worker-1  | 2026-10-27T12:03:51.540Z [notification-worker 1de30bf7c052] RECIBIDO orderId=ORD-1003-MVQN08EC correlationId=109ad3bc-22b3-4b86-b510-6f77fad7e9c3
-   | notification-worker-1  | 2026-10-27T12:03:59.548Z [notification-worker 1de30bf7c052] PROCESADO orderId=ORD-1003-MVQN08EC correlationId=109ad3bc-22b3-4b86-b510-6f77fad7e9c3 (ack enviado)
+   | notification-worker-1  | 2026-10-27T12:25:06.635Z [notification-worker 1de30bf7c052] RECIBIDO orderId=ORD-1029-MVQNRGE8 correlationId=8bd6260b-4ada-4978-b173-79a6166b9071
+   | notification-worker-1  | 2026-10-27T12:25:14.638Z [notification-worker 1de30bf7c052] PROCESADO orderId=ORD-1029-MVQNRGE8 correlationId=8bd6260b-4ada-4978-b173-79a6166b9071 (ack enviado)
    ✔ El worker registró RECIBIDO y PROCESADO (ack) para el pedido
    Cola al final: Ready=0 Unacked=0 Total=0 Consumidores=1
    ✔ La cola queda vacía después del ack
    📸 CAPTURA: Terminal: docker compose logs notification-worker (líneas RECIBIDO / PROCESADO)
 
-RESULTADO CP-03 (rabbitmq): CUMPLE  [2/2 verificaciones, 25.6 s]
+RESULTADO CP-03 (rabbitmq): CUMPLE  [2/2 verificaciones, 205.3 s]

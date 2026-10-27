@@ -1,14 +1,14 @@
 ==============================================================================
 CP-11 · Desacoplamiento temporal: mensajes publicados con el consumidor apagado
 Arquitectura: RabbitMQ (mensajes)
-Fecha de ejecución: 2026-10-27T12:06:40.869Z
+Fecha de ejecución: 2026-10-27T12:52:40.225Z
 ==============================================================================
 
 ▶ Detener el worker y publicar 3 pedidos
    $ docker compose stop notification-worker
-   HTTP 202 → ORD-1019-MVQN430Q
-   HTTP 202 → ORD-1020-MVQN430T
-   HTTP 202 → ORD-1021-MVQN430V
+   HTTP 202 → ORD-1050-MVQOR8XU
+   HTTP 202 → ORD-1051-MVQOR8XY
+   HTTP 202 → ORD-1052-MVQOR8Y1
    Cola con el worker apagado: Ready=3 Unacked=0 Total=3 Consumidores=0
    ✔ Los 3 mensajes se acumulan en la cola (Ready ≥ 3)
    📸 CAPTURA: Consola RabbitMQ → Queues → pedidos: Ready = 3 con el worker apagado
@@ -16,21 +16,10 @@ Fecha de ejecución: 2026-10-27T12:06:40.869Z
 ▶ Iniciar el worker más tarde
    $ docker compose start notification-worker
    --- Log del worker ---
-   | notification-worker-1  | 2026-10-27T12:04:49.018Z [notification-worker 1de30bf7c052] PROCESADO orderId=ORD-1005-MVQN1FHR correlationId=18fcfd20-153e-409f-a40a-59dd2ca0b7c3 (ack enviado)
-   | notification-worker-1  | 2026-10-27T12:04:57.024Z [notification-worker 1de30bf7c052] PROCESADO orderId=ORD-1006-MVQN1FHV correlationId=d1bea31d-8fc1-46c6-9f89-528c4c45ab73 (ack enviado)
-   | notification-worker-1  | 2026-10-27T12:05:05.030Z [notification-worker 1de30bf7c052] PROCESADO orderId=ORD-1007-MVQN1FI0 correlationId=2b263e8f-0b63-4b69-8300-3e4b89576328 (ack enviado)
-   | notification-worker-1  | 2026-10-27T12:05:13.039Z [notification-worker 1de30bf7c052] PROCESADO orderId=ORD-1008-MVQN1FI2 correlationId=01ea3ee8-8fad-46ff-a560-91d622eb314f (ack enviado)
-   | notification-worker-1  | 2026-10-27T12:05:21.049Z [notification-worker 1de30bf7c052] PROCESADO orderId=ORD-1009-MVQN1FI5 correlationId=82a9b937-4646-4da7-b645-b36493ad495e (ack enviado)
-   | notification-worker-1  | 2026-10-27T12:05:48.961Z [notification-worker 1de30bf7c052] PROCESADO orderId=ORD-1010-MVQN2IAT correlationId=8fe60de9-73bf-47c9-9984-b47dbac1544b (ack enviado)
-   | notification-worker-1  | 2026-10-27T12:05:56.970Z [notification-worker 1de30bf7c052] PROCESADO orderId=ORD-1011-MVQN2P1O correlationId=6df4434e-4588-4eda-8a75-9bdb83e478cc (ack enviado)
-   | notification-worker-1  | 2026-10-27T12:06:04.980Z [notification-worker 1de30bf7c052] PROCESADO orderId=ORD-1012-MVQN2P1S correlationId=20a3aa3a-a150-43c5-80d2-e2000f5ff943 (ack enviado)
-   | notification-worker-1  | 2026-10-27T12:06:22.606Z [notification-worker 1de30bf7c052] PROCESADO orderId=ORD-1013-MVQN3FPG correlationId=2fc16fa8-c86f-4a53-8274-9f306616b6d0 (ack enviado)
-   | notification-worker-1  | 2026-10-27T12:06:30.616Z [notification-worker 1de30bf7c052] PROCESADO orderId=ORD-1015-MVQN3FPP correlationId=44d20c55-96db-427f-927e-5e2f56f44a02 (ack enviado)
-   | notification-worker-1  | 2026-10-27T12:06:38.619Z [notification-worker 1de30bf7c052] PROCESADO orderId=ORD-1017-MVQN3FPU correlationId=6de93147-30b6-4580-85b3-9798eb9538e2 (ack enviado)
-   | notification-worker-1  | 2026-10-27T12:07:06.754Z [notification-worker 1de30bf7c052] PROCESADO orderId=ORD-1019-MVQN430Q correlationId=b918655a-2248-49a5-8edf-529fd29fe932 (ack enviado)
-   | notification-worker-1  | 2026-10-27T12:07:14.763Z [notification-worker 1de30bf7c052] PROCESADO orderId=ORD-1020-MVQN430T correlationId=0cb0211a-f6c3-4877-a7d6-88dd9c097d27 (ack enviado)
-   | notification-worker-1  | 2026-10-27T12:07:22.772Z [notification-worker 1de30bf7c052] PROCESADO orderId=ORD-1021-MVQN430V correlationId=103b7046-7a4f-43bf-92ef-f5e5bbc4afa7 (ack enviado)
+   | notification-worker-1  | 2026-10-27T12:53:56.714Z [notification-worker 1de30bf7c052] PROCESADO orderId=ORD-1050-MVQOR8XU correlationId=f446f750-f27f-4b35-a648-735553f5f39b (ack enviado)
+   | notification-worker-1  | 2026-10-27T12:54:04.721Z [notification-worker 1de30bf7c052] PROCESADO orderId=ORD-1051-MVQOR8XY correlationId=1a0a41c2-37c3-403d-9cd5-ee36088e136a (ack enviado)
+   | notification-worker-1  | 2026-10-27T12:54:12.730Z [notification-worker 1de30bf7c052] PROCESADO orderId=ORD-1052-MVQOR8Y1 correlationId=e66962b7-d498-44d5-8d7f-5b4db3c83635 (ack enviado)
    ✔ El worker procesa los 3 mensajes pendientes al iniciar
    ✔ La cola queda en 0
 
-RESULTADO CP-11 (rabbitmq): CUMPLE  [3/3 verificaciones, 48.9 s]
+RESULTADO CP-11 (rabbitmq): CUMPLE  [3/3 verificaciones, 99.6 s]

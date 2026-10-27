@@ -1,31 +1,31 @@
 ==============================================================================
 CP-09 · Resilient: el sistema soporta la caída del consumidor
 Arquitectura: RabbitMQ (mensajes)
-Fecha de ejecución: 2026-10-27T12:05:30.601Z
+Fecha de ejecución: 2026-10-27T12:46:02.860Z
 ==============================================================================
 
 ▶ Enviar un pedido y "matar" al worker mientras lo procesa (sin ack)
-   Pedido en proceso: ORD-1010-MVQN2IAT
+   Pedido en proceso: ORD-1041-MVQOIN22
    $ docker compose kill notification-worker
    Cola tras la caída: Ready=1 Unacked=0 Total=1 Consumidores=0
    ✔ El mensaje no confirmado vuelve a la cola (no se pierde)
    📸 CAPTURA: Consola RabbitMQ → Queues → pedidos: Ready ≥ 1 y Consumers = 0 tras la caída del worker
 
 ▶ Con el worker caído, la API sigue aceptando pedidos
-   HTTP 202 (3 ms) y HTTP 202 (4 ms)
+   HTTP 202 (4 ms) y HTTP 202 (4 ms)
    ✔ La API responde 202 aunque no haya consumidor
 
 ▶ Recuperación: iniciar el worker
    $ docker compose start notification-worker
    --- Log del worker ---
-   | notification-worker-1  | 2026-10-27T12:05:31.303Z [notification-worker 1de30bf7c052] RECIBIDO orderId=ORD-1010-MVQN2IAT correlationId=8fe60de9-73bf-47c9-9984-b47dbac1544b
-   | notification-worker-1  | 2026-10-27T12:05:40.956Z [notification-worker 1de30bf7c052] RECIBIDO orderId=ORD-1010-MVQN2IAT correlationId=8fe60de9-73bf-47c9-9984-b47dbac1544b (REENTREGADO)
-   | notification-worker-1  | 2026-10-27T12:05:48.961Z [notification-worker 1de30bf7c052] PROCESADO orderId=ORD-1010-MVQN2IAT correlationId=8fe60de9-73bf-47c9-9984-b47dbac1544b (ack enviado)
-   | notification-worker-1  | 2026-10-27T12:05:48.962Z [notification-worker 1de30bf7c052] RECIBIDO orderId=ORD-1011-MVQN2P1O correlationId=6df4434e-4588-4eda-8a75-9bdb83e478cc
-   | notification-worker-1  | 2026-10-27T12:05:56.970Z [notification-worker 1de30bf7c052] PROCESADO orderId=ORD-1011-MVQN2P1O correlationId=6df4434e-4588-4eda-8a75-9bdb83e478cc (ack enviado)
-   | notification-worker-1  | 2026-10-27T12:05:56.972Z [notification-worker 1de30bf7c052] RECIBIDO orderId=ORD-1012-MVQN2P1S correlationId=20a3aa3a-a150-43c5-80d2-e2000f5ff943
-   | notification-worker-1  | 2026-10-27T12:06:04.980Z [notification-worker 1de30bf7c052] PROCESADO orderId=ORD-1012-MVQN2P1S correlationId=20a3aa3a-a150-43c5-80d2-e2000f5ff943 (ack enviado)
+   | notification-worker-1  | 2026-10-27T12:46:03.580Z [notification-worker 1de30bf7c052] RECIBIDO orderId=ORD-1041-MVQOIN22 correlationId=90db21e3-a187-48ef-a384-0a288e105954
+   | notification-worker-1  | 2026-10-27T12:47:04.637Z [notification-worker 1de30bf7c052] RECIBIDO orderId=ORD-1041-MVQOIN22 correlationId=90db21e3-a187-48ef-a384-0a288e105954 (REENTREGADO)
+   | notification-worker-1  | 2026-10-27T12:47:12.647Z [notification-worker 1de30bf7c052] PROCESADO orderId=ORD-1041-MVQOIN22 correlationId=90db21e3-a187-48ef-a384-0a288e105954 (ack enviado)
+   | notification-worker-1  | 2026-10-27T12:47:12.648Z [notification-worker 1de30bf7c052] RECIBIDO orderId=ORD-1042-MVQOJXGH correlationId=1713fc02-87d6-4731-8fa0-bf9fbc2a5847
+   | notification-worker-1  | 2026-10-27T12:47:20.651Z [notification-worker 1de30bf7c052] PROCESADO orderId=ORD-1042-MVQOJXGH correlationId=1713fc02-87d6-4731-8fa0-bf9fbc2a5847 (ack enviado)
+   | notification-worker-1  | 2026-10-27T12:47:20.652Z [notification-worker 1de30bf7c052] RECIBIDO orderId=ORD-1043-MVQOJXGL correlationId=dd206aa9-f72a-4b79-8286-b1f575ebc85e
+   | notification-worker-1  | 2026-10-27T12:47:28.660Z [notification-worker 1de30bf7c052] PROCESADO orderId=ORD-1043-MVQOJXGL correlationId=dd206aa9-f72a-4b79-8286-b1f575ebc85e (ack enviado)
    ✔ Los 3 pedidos se procesaron, incluido el que estaba en curso
    ✔ El pedido interrumpido aparece como REENTREGADO
 
-RESULTADO CP-09 (rabbitmq): CUMPLE  [4/4 verificaciones, 35.3 s]
+RESULTADO CP-09 (rabbitmq): CUMPLE  [4/4 verificaciones, 86.5 s]

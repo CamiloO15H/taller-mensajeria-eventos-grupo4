@@ -1,24 +1,25 @@
 ==============================================================================
 CP-06 · Trazabilidad del flujo (API → RabbitMQ → worker)
 Arquitectura: RabbitMQ (mensajes)
-Fecha de ejecución: 2026-10-27T12:04:10.003Z
+Fecha de ejecución: 2026-10-27T12:28:19.824Z
 ==============================================================================
 
 ▶ Worker detenido un momento para observar el mensaje dentro del broker
    $ docker compose stop notification-worker
-   Pedido: orderId=ORD-1004-MVQN0Z9N correlationId=cf1f6bef-a32a-40a5-bc0e-9002c7ce8a7c
-   📸 CAPTURA: Consola RabbitMQ → Queues → pedidos → Get messages: mensaje con orderId ORD-1004-MVQN0Z9N
+   Pedido: orderId=ORD-1030-MVQNW1YG correlationId=64a103be-09ce-4c8d-a701-0a9c3123755d
+   📸 CAPTURA: Consola RabbitMQ → Queues → pedidos → Get messages: mensaje con orderId ORD-1030-MVQNW1YG
    $ docker compose start notification-worker
    --- 1) orders-api ---
-   | orders-api  | 2026-10-27T12:04:19.981Z [orders-api] PUBLICADO orderId=ORD-1004-MVQN0Z9N correlationId=cf1f6bef-a32a-40a5-bc0e-9002c7ce8a7c cola=pedidos
+   | orders-api  | 2026-10-27T12:28:29.801Z [orders-api] PUBLICADO orderId=ORD-1030-MVQNW1YG correlationId=64a103be-09ce-4c8d-a701-0a9c3123755d cola=pedidos
    --- 2) RabbitMQ (cola pedidos) ---
-   | message_id=ORD-1004-MVQN0Z9N correlation_id=cf1f6bef-a32a-40a5-bc0e-9002c7ce8a7c
+   | message_id=ORD-1030-MVQNW1YG correlation_id=64a103be-09ce-4c8d-a701-0a9c3123755d
    --- 3) notification-worker ---
-   | notification-worker-1  | 2026-10-27T12:04:30.937Z [notification-worker 1de30bf7c052] RECIBIDO orderId=ORD-1004-MVQN0Z9N correlationId=cf1f6bef-a32a-40a5-bc0e-9002c7ce8a7c (REENTREGADO)
-   | notification-worker-1  | 2026-10-27T12:04:38.941Z [notification-worker 1de30bf7c052] PROCESADO orderId=ORD-1004-MVQN0Z9N correlationId=cf1f6bef-a32a-40a5-bc0e-9002c7ce8a7c (ack enviado)
+   | notification-worker-1  | 2026-10-27T12:32:28.092Z [notification-worker 1de30bf7c052] RECIBIDO orderId=ORD-1030-MVQNW1YG correlationId=64a103be-09ce-4c8d-a701-0a9c3123755d (REENTREGADO)
+   | notification-worker-1  | 2026-10-27T12:32:36.102Z [notification-worker 1de30bf7c052] PROCESADO orderId=ORD-1030-MVQNW1YG correlationId=64a103be-09ce-4c8d-a701-0a9c3123755d (ack enviado)
+   Nota: aparece como REENTREGADO porque el mensaje se inspeccionó en el broker (Get messages con reencolado) antes de que el worker lo consumiera.
    ✔ La API registra el orderId y el correlationId
    ✔ El broker tiene el mensaje con el mismo correlationId
    ✔ El worker registra RECIBIDO y PROCESADO con el mismo correlationId
-   📸 CAPTURA: Terminal: docker compose logs orders-api notification-worker | findstr ORD-1004-MVQN0Z9N   (en Linux: grep)
+   📸 CAPTURA: Terminal: docker compose logs orders-api notification-worker | findstr ORD-1030-MVQNW1YG   (en Linux: grep)
 
-RESULTADO CP-06 (rabbitmq): CUMPLE  [3/3 verificaciones, 30.3 s]
+RESULTADO CP-06 (rabbitmq): CUMPLE  [3/3 verificaciones, 502.1 s]

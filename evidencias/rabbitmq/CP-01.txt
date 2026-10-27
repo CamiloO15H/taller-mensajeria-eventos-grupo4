@@ -1,18 +1,19 @@
 ==============================================================================
 CP-01 · Creación de pedido vía API
 Arquitectura: RabbitMQ (mensajes)
-Fecha de ejecución: 2026-10-27T12:03:25.758Z
+Fecha de ejecución: 2026-10-27T12:13:22.467Z
 ==============================================================================
 
 ▶ POST /orders con un pedido válido
    Body: {"customerName":"Carlos","product":"Libro de arquitectura","quantity":1}
-   HTTP 202 en 22 ms → {"status":"accepted","message":"Pedido recibido y enviado a RabbitMQ","orderId":"ORD-1001-MVQMZU1L","correlationId":"3390de0d-e5ab-4303-a272-39ef0f2cfe4e"}
+   HTTP 202 en 7 ms → {"status":"accepted","message":"Pedido recibido y enviado a RabbitMQ","orderId":"ORD-1026-MVQNCMFN","correlationId":"0daa076c-ba9a-4b4f-973e-6af8046aff3b"}
    ✔ Responde 202 Accepted
-   ✔ status = "accepted" y trae orderId → ORD-1001-MVQMZU1L
+   ✔ status = "accepted" y trae orderId → ORD-1026-MVQNCMFN
 
 ▶ POST /orders con datos inválidos (quantity = 0)
    HTTP 400 → {"status":"rejected","message":"customerName y product son obligatorios; quantity debe ser un entero mayor que 0"}
    ✔ Rechaza el JSON inválido con 400
    📸 CAPTURA: Postman: POST http://localhost:3000/orders con el body válido → 202 accepted
+   
 
-RESULTADO CP-01 (rabbitmq): CUMPLE  [3/3 verificaciones, 0.8 s]
+RESULTADO CP-01 (rabbitmq): CUMPLE  [3/3 verificaciones, 32.8 s]

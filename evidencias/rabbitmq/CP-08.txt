@@ -1,14 +1,14 @@
 ==============================================================================
 CP-08 · Message-driven: sin comunicación directa entre servicios
 Arquitectura: RabbitMQ (mensajes)
-Fecha de ejecución: 2026-10-27T12:05:29.215Z
+Fecha de ejecución: 2026-10-27T12:43:02.950Z
 ==============================================================================
 
 ▶ Puertos publicados por cada contenedor
    --- docker compose ps ---
    | arq-rabbitmq-notification-worker-1       running   (sin puertos publicados)
-   | orders-api                               running   3000->3000, 3000->3000
-   | rabbitmq                                 running   5672->5672, 5672->5672, 15672->15672, 15672->15672
+   | orders-api                               running   3000->3000
+   | rabbitmq                                 running   5672->5672, 15672->15672
    ✔ El worker no publica puertos (no tiene API HTTP)
 
 ▶ Variables de entorno de orders-api: solo conoce al broker
@@ -28,4 +28,4 @@ Fecha de ejecución: 2026-10-27T12:05:29.215Z
    ✔ Productor y consumidor están conectados SOLO al broker
    📸 CAPTURA: docker compose ps (el worker sin puertos) y Consola RabbitMQ → Connections
 
-RESULTADO CP-08 (rabbitmq): CUMPLE  [4/4 verificaciones, 1.4 s]
+RESULTADO CP-08 (rabbitmq): CUMPLE  [4/4 verificaciones, 179.9 s]

@@ -1,7 +1,7 @@
 ==============================================================================
 CP-10 · Elastic: distribución de carga con múltiples consumidores
 Arquitectura: RabbitMQ (mensajes)
-Fecha de ejecución: 2026-10-27T12:06:05.945Z
+Fecha de ejecución: 2026-10-27T12:47:29.314Z
 ==============================================================================
 
 ▶ Escalar a 2 workers
@@ -12,19 +12,19 @@ Fecha de ejecución: 2026-10-27T12:06:05.945Z
 
 ▶ Enviar 6 pedidos
    --- Mensajes procesados por instancia ---
-   | c2a1ff2d27cb: 3
+   | 9fcc62994d65: 3
    | 1de30bf7c052: 3
    --- Log combinado ---
-   | notification-worker-2  | 2026-10-27T12:06:22.606Z [notification-worker c2a1ff2d27cb] PROCESADO orderId=ORD-1014-MVQN3FPK correlationId=ecde4a85-fe1f-4ae2-8478-cdc1adeab730 (ack enviado)
-   | notification-worker-2  | 2026-10-27T12:06:30.616Z [notification-worker c2a1ff2d27cb] PROCESADO orderId=ORD-1016-MVQN3FPR correlationId=3e5879ec-274b-4d9c-86dd-a8aacc8e3227 (ack enviado)
-   | notification-worker-2  | 2026-10-27T12:06:38.619Z [notification-worker c2a1ff2d27cb] PROCESADO orderId=ORD-1018-MVQN3FPX correlationId=252d1a57-7417-4596-99a3-cf1af04b690e (ack enviado)
-   | notification-worker-1  | 2026-10-27T12:06:22.606Z [notification-worker 1de30bf7c052] PROCESADO orderId=ORD-1013-MVQN3FPG correlationId=2fc16fa8-c86f-4a53-8274-9f306616b6d0 (ack enviado)
-   | notification-worker-1  | 2026-10-27T12:06:30.616Z [notification-worker 1de30bf7c052] PROCESADO orderId=ORD-1015-MVQN3FPP correlationId=44d20c55-96db-427f-927e-5e2f56f44a02 (ack enviado)
-   | notification-worker-1  | 2026-10-27T12:06:38.619Z [notification-worker 1de30bf7c052] PROCESADO orderId=ORD-1017-MVQN3FPU correlationId=6de93147-30b6-4580-85b3-9798eb9538e2 (ack enviado)
+   | notification-worker-2  | 2026-10-27T12:51:55.431Z [notification-worker 9fcc62994d65] PROCESADO orderId=ORD-1045-MVQOQ0DD correlationId=156483d0-10bc-4a13-ad52-a531a78c70f4 (ack enviado)
+   | notification-worker-2  | 2026-10-27T12:52:03.434Z [notification-worker 9fcc62994d65] PROCESADO orderId=ORD-1047-MVQOQ0DH correlationId=69cef99c-2cfe-49fd-9473-defe1fdd6f0e (ack enviado)
+   | notification-worker-2  | 2026-10-27T12:52:11.442Z [notification-worker 9fcc62994d65] PROCESADO orderId=ORD-1048-MVQOQ0DJ correlationId=254e88ce-3da6-4522-8bdd-2f409271260a (ack enviado)
+   | notification-worker-1  | 2026-10-27T12:51:55.431Z [notification-worker 1de30bf7c052] PROCESADO orderId=ORD-1044-MVQOQ0D7 correlationId=d5522411-b08f-4dfc-9a0e-b6eb988e274c (ack enviado)
+   | notification-worker-1  | 2026-10-27T12:52:03.440Z [notification-worker 1de30bf7c052] PROCESADO orderId=ORD-1046-MVQOQ0DF correlationId=546186a1-dc93-4791-8ec3-e550c97a23fb (ack enviado)
+   | notification-worker-1  | 2026-10-27T12:52:11.448Z [notification-worker 1de30bf7c052] PROCESADO orderId=ORD-1049-MVQOQ0DL correlationId=99f8a2df-43db-4f2e-b9a3-e48c71cc669c (ack enviado)
    ✔ Los 6 pedidos se procesaron
    ✔ La carga se repartió entre las 2 instancias
    📸 CAPTURA: Terminal: docker compose logs notification-worker (dos instancias distintas procesando)
 
 ▶ Restaurar a 1 worker
 
-RESULTADO CP-10 (rabbitmq): CUMPLE  [3/3 verificaciones, 34.9 s]
+RESULTADO CP-10 (rabbitmq): CUMPLE  [3/3 verificaciones, 310.9 s]
