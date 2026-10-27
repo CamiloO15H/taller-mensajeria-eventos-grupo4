@@ -1,0 +1,52 @@
+# Arquitectura basada en MENSAJES con RabbitMQ
+# Levantar:  docker compose up -d --build
+# Escalar:   docker compose up -d --scale notification-worker=2
+name: arq-rabbitmq
+
+services:
+  rabbitmq:
+    image: rabbitmq:4-management
+    container_name: rabbitmq
+    hostname: rabbitmq   # nombre de nodo fijo: los datos del volumen siguen siendo válidos al recrear
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: admin
+    ports:
+      - "5672:5672"     # AMQP: orders-api y notification-worker
+      - "15672:15672"   # consola web RabbitMQ Management
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq   # persistencia: la cola y los mensajes sobreviven a reinicios (CP-12)
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 5s
+      timeout: 10s
+      retries: 20
+
+  orders-api:
+    build: ./orders-api
+    container_name: orders-api
+    ports:
+      - "3000:3000"
+    environment:
+      PORT: 3000
+      AMQP_URL: amqp://admin:admin@rabbitmq:5672   # nunca localhost dentro de un contenedor
+      QUEUE: pedidos
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    restart: unless-stopped
+
+  notification-worker:
+    build: ./notification-worker
+    # Sin container_name ni ports: se puede escalar y no recibe llamadas HTTP
+    environment:
+      AMQP_URL: amqp://admin:admin@rabbitmq:5672
+      QUEUE: pedidos
+      PROCESS_MS: 8000   # procesamiento lento a propósito: deja ver los mensajes Unacked
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  rabbitmq-data:

@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 470" font-family="Arial, Helvetica, sans-serif">
+  <defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1C2D5A"/></marker></defs>
+  <rect width="1000" height="470" fill="#fff"/>
+  <text x="500" y="32" text-anchor="middle" font-size="21" font-weight="bold" fill="#1C2D5A">Arquitectura basada en mensajes — RabbitMQ</text>
+  <rect x="12" y="185" width="150" height="90" rx="10" fill="#EEF2F8" stroke="#1C2D5A" stroke-width="2"/>
+  <text x="87" y="222" text-anchor="middle" font-size="16" font-weight="bold" fill="#1C2D5A">Cliente</text>
+  <text x="87" y="245" text-anchor="middle" font-size="12" fill="#333">Postman / curl /</text>
+  <text x="87" y="262" text-anchor="middle" font-size="12" fill="#333">ejecutor de pruebas</text>
+  <line x1="162" y1="230" x2="246" y2="230" stroke="#1C2D5A" stroke-width="2.5" marker-end="url(#a)"/>
+  <text x="204" y="218" text-anchor="middle" font-size="10" fill="#1C2D5A">HTTP POST</text>
+  <text x="204" y="250" text-anchor="middle" font-size="10" fill="#1C2D5A">/orders :3000</text>
+  <rect x="243" y="60" width="735" height="380" rx="14" fill="none" stroke="#8FA3C4" stroke-width="1.5" stroke-dasharray="7 5"/>
+  <text x="252" y="82" font-size="12" fill="#5A6E92">Docker Compose · cada componente en su propio contenedor</text>
+  <rect x="250" y="170" width="190" height="120" rx="10" fill="#E8EEF8" stroke="#1C2D5A" stroke-width="2"/>
+  <text x="345" y="200" text-anchor="middle" font-size="16" font-weight="bold" fill="#1C2D5A">orders-api</text>
+  <text x="345" y="222" text-anchor="middle" font-size="12" fill="#333">Node.js · productor</text>
+  <text x="345" y="244" text-anchor="middle" font-size="12" fill="#333">valida, genera orderId</text>
+  <text x="345" y="261" text-anchor="middle" font-size="12" fill="#333">y publica ProcessOrder</text>
+  <text x="345" y="280" text-anchor="middle" font-size="11" fill="#B9841F">responde 202 sin esperar</text>
+  <line x1="440" y1="230" x2="516" y2="230" stroke="#1C2D5A" stroke-width="2.5" marker-end="url(#a)"/>
+  <text x="478" y="218" text-anchor="middle" font-size="11" fill="#1C2D5A">AMQP 5672</text>
+  <text x="478" y="250" text-anchor="middle" font-size="11" fill="#1C2D5A">persistente</text>
+  <rect x="520" y="150" width="200" height="160" rx="10" fill="#1C2D5A"/>
+  <text x="620" y="180" text-anchor="middle" font-size="16" font-weight="bold" fill="#fff">RabbitMQ</text>
+  <text x="620" y="200" text-anchor="middle" font-size="11" fill="#C9D4E8">consola :15672 (admin/admin)</text>
+  <rect x="545" y="215" width="150" height="50" rx="6" fill="#fff"/>
+  <text x="620" y="237" text-anchor="middle" font-size="13" font-weight="bold" fill="#1C2D5A">cola: pedidos</text>
+  <text x="620" y="255" text-anchor="middle" font-size="11" fill="#333">durable</text>
+  <text x="620" y="290" text-anchor="middle" font-size="11" fill="#FFD966">Ready · Unacked · Total</text>
+  <rect x="790" y="120" width="170" height="90" rx="10" fill="#E7F2EC" stroke="#2E7D4F" stroke-width="2"/>
+  <text x="875" y="150" text-anchor="middle" font-size="14" font-weight="bold" fill="#2E7D4F">notification-worker</text>
+  <text x="875" y="172" text-anchor="middle" font-size="12" fill="#333">consumidor</text>
+  <text x="875" y="190" text-anchor="middle" font-size="11" fill="#333">prefetch 1 · ack manual</text>
+  <rect x="790" y="250" width="170" height="90" rx="10" fill="#E7F2EC" stroke="#2E7D4F" stroke-width="2" stroke-dasharray="6 4"/>
+  <text x="875" y="280" text-anchor="middle" font-size="14" font-weight="bold" fill="#2E7D4F">notification-worker #2</text>
+  <text x="875" y="302" text-anchor="middle" font-size="12" fill="#333">--scale (CP-10)</text>
+  <line x1="720" y1="215" x2="786" y2="170" stroke="#1C2D5A" stroke-width="2.5" marker-end="url(#a)"/>
+  <line x1="720" y1="250" x2="786" y2="292" stroke="#1C2D5A" stroke-width="2.5" stroke-dasharray="6 4" marker-end="url(#a)"/>
+  <text x="755" y="232" text-anchor="middle" font-size="11" fill="#1C2D5A">AMQP</text>
+  <text x="600" y="410" text-anchor="middle" font-size="12" fill="#555">La API nunca llama al worker. El worker no expone puertos. Toda la comunicación pasa por la cola.</text>
+</svg>

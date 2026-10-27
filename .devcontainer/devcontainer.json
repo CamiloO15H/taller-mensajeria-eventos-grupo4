@@ -1,0 +1,15 @@
+{
+  "name": "Taller mensajes y eventos (RabbitMQ + Kafka)",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:1-20-bookworm",
+  "features": {
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {}
+  },
+  "hostRequirements": { "cpus": 4, "memory": "8gb" },
+  "forwardPorts": [3000, 15672, 8080],
+  "portsAttributes": {
+    "3000": { "label": "orders-api" },
+    "15672": { "label": "RabbitMQ Management (admin/admin)" },
+    "8080": { "label": "Kafka UI" }
+  },
+  "postCreateCommand": "npm install"
+}

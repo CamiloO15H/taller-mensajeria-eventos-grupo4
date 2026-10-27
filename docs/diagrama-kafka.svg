@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 500" font-family="Arial, Helvetica, sans-serif">
+  <defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1C2D5A"/></marker></defs>
+  <rect width="1000" height="500" fill="#fff"/>
+  <text x="500" y="32" text-anchor="middle" font-size="21" font-weight="bold" fill="#1C2D5A">Arquitectura orientada a eventos — Apache Kafka</text>
+  <rect x="12" y="200" width="150" height="90" rx="10" fill="#EEF2F8" stroke="#1C2D5A" stroke-width="2"/>
+  <text x="87" y="237" text-anchor="middle" font-size="16" font-weight="bold" fill="#1C2D5A">Cliente</text>
+  <text x="87" y="260" text-anchor="middle" font-size="12" fill="#333">Postman / curl /</text>
+  <text x="87" y="277" text-anchor="middle" font-size="12" fill="#333">ejecutor de pruebas</text>
+  <line x1="162" y1="245" x2="246" y2="245" stroke="#1C2D5A" stroke-width="2.5" marker-end="url(#a)"/>
+  <text x="204" y="233" text-anchor="middle" font-size="10" fill="#1C2D5A">HTTP POST</text>
+  <text x="204" y="265" text-anchor="middle" font-size="10" fill="#1C2D5A">/orders :3000</text>
+  <rect x="243" y="60" width="735" height="410" rx="14" fill="none" stroke="#8FA3C4" stroke-width="1.5" stroke-dasharray="7 5"/>
+  <text x="252" y="82" font-size="12" fill="#5A6E92">Docker Compose · cada componente en su propio contenedor</text>
+  <rect x="250" y="185" width="190" height="120" rx="10" fill="#E8EEF8" stroke="#1C2D5A" stroke-width="2"/>
+  <text x="345" y="215" text-anchor="middle" font-size="16" font-weight="bold" fill="#1C2D5A">orders-api</text>
+  <text x="345" y="237" text-anchor="middle" font-size="12" fill="#333">Node.js · productor</text>
+  <text x="345" y="259" text-anchor="middle" font-size="12" fill="#333">publica OrderCreated</text>
+  <text x="345" y="276" text-anchor="middle" font-size="12" fill="#333">key = orderId</text>
+  <text x="345" y="295" text-anchor="middle" font-size="11" fill="#B9841F">responde 202 sin esperar</text>
+  <line x1="440" y1="245" x2="516" y2="245" stroke="#1C2D5A" stroke-width="2.5" marker-end="url(#a)"/>
+  <text x="478" y="233" text-anchor="middle" font-size="11" fill="#1C2D5A">kafka:9092</text>
+  <rect x="520" y="140" width="210" height="210" rx="10" fill="#1C2D5A"/>
+  <text x="625" y="168" text-anchor="middle" font-size="16" font-weight="bold" fill="#fff">Kafka (KRaft)</text>
+  <text x="625" y="188" text-anchor="middle" font-size="11" fill="#C9D4E8">Kafka UI :8080 · externo :29092</text>
+  <rect x="540" y="200" width="170" height="110" rx="6" fill="#fff"/>
+  <text x="625" y="222" text-anchor="middle" font-size="13" font-weight="bold" fill="#1C2D5A">tópico: orders.events</text>
+  <rect x="555" y="235" width="140" height="18" fill="#DDE5F2"/><text x="625" y="248" text-anchor="middle" font-size="11" fill="#1C2D5A">partición 0 · offsets →</text>
+  <rect x="555" y="258" width="140" height="18" fill="#DDE5F2"/><text x="625" y="271" text-anchor="middle" font-size="11" fill="#1C2D5A">partición 1 · offsets →</text>
+  <rect x="555" y="281" width="140" height="18" fill="#DDE5F2"/><text x="625" y="294" text-anchor="middle" font-size="11" fill="#1C2D5A">partición 2 · offsets →</text>
+  <text x="625" y="336" text-anchor="middle" font-size="11" fill="#FFD966">log persistente (volumen)</text>
+  <g font-size="12">
+    <rect x="790" y="100" width="170" height="74" rx="10" fill="#E7F2EC" stroke="#2E7D4F" stroke-width="2"/>
+    <text x="875" y="128" text-anchor="middle" font-size="14" font-weight="bold" fill="#2E7D4F">inventory-consumer</text>
+    <text x="875" y="150" text-anchor="middle" fill="#333">inventory-service-group</text>
+    <rect x="790" y="208" width="170" height="74" rx="10" fill="#E7F2EC" stroke="#2E7D4F" stroke-width="2"/>
+    <text x="875" y="236" text-anchor="middle" font-size="14" font-weight="bold" fill="#2E7D4F">billing-consumer</text>
+    <text x="875" y="258" text-anchor="middle" fill="#333">billing-service-group</text>
+    <rect x="790" y="316" width="170" height="74" rx="10" fill="#E7F2EC" stroke="#2E7D4F" stroke-width="2"/>
+    <text x="875" y="344" text-anchor="middle" font-size="14" font-weight="bold" fill="#2E7D4F">notification-consumer</text>
+    <text x="875" y="366" text-anchor="middle" fill="#333">notification-service-group</text>
+  </g>
+  <line x1="730" y1="200" x2="786" y2="140" stroke="#1C2D5A" stroke-width="2.5" marker-end="url(#a)"/>
+  <line x1="730" y1="245" x2="786" y2="245" stroke="#1C2D5A" stroke-width="2.5" marker-end="url(#a)"/>
+  <line x1="730" y1="290" x2="786" y2="350" stroke="#1C2D5A" stroke-width="2.5" marker-end="url(#a)"/>
+  <text x="600" y="440" text-anchor="middle" font-size="12" fill="#555">Cada grupo recibe TODOS los eventos y lleva su propio offset. La API no conoce a los consumidores.</text>
+</svg>

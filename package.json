@@ -1,0 +1,12 @@
+{
+  "name": "taller-mensajeria-eventos",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Pruebas de integración en arquitecturas basadas en mensajes (RabbitMQ) y eventos (Kafka)",
+  "scripts": {
+    "test:rabbitmq": "node pruebas/run.js rabbitmq all",
+    "test:kafka": "node pruebas/run.js kafka all"
+  },
+  "engines": { "node": ">=20" },
+  "dependencies": { "kafkajs": "^2.2.4" }
+}
